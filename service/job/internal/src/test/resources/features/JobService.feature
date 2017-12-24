@@ -131,6 +131,10 @@ Scenario: Update a nonexistent job
 
 Scenario: Count job items
 
+    When I configure
+        | type    | name                       | value |
+        | boolean | infiniteChildEntities      | true  |
+        | integer | maxNumberChildEntities     | 5     |
     Given I create 10 job items
     When I count the jobs in the database
     Then There are exactly 10 items
@@ -145,8 +149,16 @@ Scenario: Count job items in wrong (empty) scope
 Scenario: Query for job items
 
     Given Scope with ID 10
+    When I configure
+        | type    | name                       | value |
+        | boolean | infiniteChildEntities      | true  |
+        | integer | maxNumberChildEntities     | 5     |
     Then I create 10 job items
     Given Scope with ID 20
+    When I configure
+        | type    | name                       | value |
+        | boolean | infiniteChildEntities      | true  |
+        | integer | maxNumberChildEntities     | 5     |
     Then I create 20 job items
     When I query for jobs in scope 10
     Then There are exactly 10 items
