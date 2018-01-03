@@ -532,12 +532,14 @@ public class KapuaSecurityBrokerFilter extends BrokerFilter implements Authentic
             throws Exception {
         if (!isPassThroughConnection(context)) {
             Context loginRemoveConnectionTimeContext = loginMetric.getRemoveConnectionTime().time();
-            KapuaConnectionContext kcc = new KapuaConnectionContext(brokerIdResolver.getBrokerId(this), info);
-            kcc.updateOldConnectionId(CONNECTION_MAP.get(kcc.getFullClientId()));
+            KapuaConnectionContext kcc = null;
             try {
                 KapuaSecurityContext kapuaSecurityContext = getKapuaSecurityContext(context);
+                KapuaPrincipal kapuaPrincipal = ((KapuaPrincipal) kapuaSecurityContext.getMainPrincipal());
+                kcc = new KapuaConnectionContext(brokerIdResolver.getBrokerId(this), kapuaPrincipal, info, MULTI_ACCOUNT_CLIENT_ID);
+                kcc.updateOldConnectionId(CONNECTION_MAP.get(kcc.getFullClientId()));
                 // TODO fix the kapua session when run as feature will be implemented
-                KapuaSecurityUtils.setSession(new KapuaSession((KapuaPrincipal) kapuaSecurityContext.getMainPrincipal()));
+                KapuaSecurityUtils.setSession(new KapuaSession(kapuaPrincipal));
                 if (!isAdminUser(kcc)) {
                     clientMetric.getDisconnectionKapuasys().inc();
                     userAuthentictionLogic.disconnect(kcc, this, error);
@@ -551,7 +553,7 @@ public class KapuaSecurityBrokerFilter extends BrokerFilter implements Authentic
             } finally {
                 loginRemoveConnectionTimeContext.stop();
                 authenticationService.logout();
-                if (kcc.getFullClientId() != null) {
+                if (kcc != null && kcc.getFullClientId() != null) {
                     // cleanup stealing link detection map
                     CONNECTION_MAP.remove(kcc.getFullClientId());
                 }
