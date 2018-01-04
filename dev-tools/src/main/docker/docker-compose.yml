@@ -52,6 +52,7 @@ services:
     ports:
     - 1883:1883
     - 61614:61614
+    - 8883:8883
   kapua-console:
     image: kapua/kapua-console:${IMAGE_VERSION}
     ports:

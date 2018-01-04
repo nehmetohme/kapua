@@ -3,6 +3,11 @@
 # Generate X509 certificate and private key
 openssl req -x509 -newkey rsa:4096 -keyout /home/kapua/key.pem -out /home/kapua/cert.pem -days 365 -nodes -subj '/O=Eclipse Kapua/C=XX'
 openssl pkcs8 -topk8 -in /home/kapua/key.pem -out /home/kapua/key.pk8 -nocrypt
+keytool -genkey -alias broker -keyalg RSA -keystore /home/kapua/kapua.ks -keypass elevate -storepass elevate -dname "CN=kapua.eclipse.org, OU=ID, O=HOME, L=SMITH, S=SMITH, C=DE"
+keytool -export -alias broker -keystore /home/kapua/kapua.ks -file /home/kapua/broker_cert -storepass elevate
+keytool -genkey -alias client -keyalg RSA -keystore /home/kapua/client.ks -keypass elevate -storepass elevate -dname "CN=kapua.eclipse.org, OU=ID, O=HOME, L=SMITH, S=SMITH, C=DE"
+keytool -import -alias broker -keystore /home/kapua/client.ts -file /home/kapua/broker_cert -storepass elevate -noprompt
+
 rm /home/kapua/key.pem
 
 # Run broker

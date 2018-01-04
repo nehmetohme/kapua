@@ -154,11 +154,9 @@
             </systemUsage>
         </systemUsage>
 
-        <!--
         <sslContext>
-            <sslContext keyStore="${certificatesHome}/kapua.ks" keyStorePassword="${keystorePassword}"/>
+            <sslContext keyStore="/home/kapua/kapua.ks" keyStorePassword="elevate"/>
         </sslContext>
-        -->
 
         <transportConnectors>
             <transportConnector name="mqtt"
